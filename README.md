@@ -4,6 +4,18 @@ Truss, [check out our jobs page](https://truss.works/jobs)._
 
 # Truss Software Engineering Interview
 
+## Solution Notes
+
+- Run on Ubuntu 16.04 LTS, with Python 3.6+, using:
+
+```sh
+./normalize < sample.csv > output.csv
+```
+
+- Dateimes were assumed to all be post 1999.
+- Code was mainly developed and tested in a Jupyter Notebook and on Ubuntu 18.10. Testing in Ubuntu 16.04 was not performed due to time constraints.
+
+
 ## Introduction and expectations
 
 Hi there! Please complete the problem described below to the best of
@@ -75,8 +87,4 @@ warning to `stderr` and drop the row from your output.
 
 You can assume that the sample data we provide will contain all date
 and time format variants you will need to handle.
-
-## Solution Notes
-
-- dateimes are assumed to all be post-2000.
 
