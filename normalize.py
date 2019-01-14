@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[11]:
+# In[ ]:
 
 
 # Imports
 import arrow
-import codecs
 import csv
 import io
-from re import match
+import re
 import sys
 
 
-# In[12]:
+# In[ ]:
 
 
 def to_seconds(time):
@@ -21,7 +20,7 @@ def to_seconds(time):
     return sum((coeff * unit for coeff, unit in zip([3600, 60, 1], units)))
 
 
-# In[13]:
+# In[ ]:
 
 
 def to_iso8601(datetime, timezone):
@@ -30,33 +29,28 @@ def to_iso8601(datetime, timezone):
     return time.to(timezone).format('YYYY-MM-DDTHH:mm:ssZZ')
 
 
-# In[14]:
+# In[ ]:
 
 
 to_zip = lambda x: '{0:0>5.5}'.format(x)
 
 
-# In[17]:
+# In[ ]:
 
 
 def normalize():
-    raw = sys.stdin.reconfigure(encoding='utf-8', errors="replace")
-    out = sys.stdout.reconfigure(encoding='utf-8', errors="ignore")
-    #out = codecs.getwriter('utf-8')(sys.stdout.detach(), 'ignore')
-    #out = codecs.getwriter('utf-8')(sys.stdout.buffer, 'ignore')
-    #raw = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
-    #out = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors="ignore")
+    raw = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
     csv.register_dialect('truss', delimiter=',', escapechar=None, quoting=csv.QUOTE_MINIMAL)
     reader = csv.DictReader(raw)
     fieldnames = reader.fieldnames
-    writer = csv.DictWriter(out, fieldnames=fieldnames)
+    writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
     writer.writeheader()
     for row in reader:
         # Timestamp : to ISO-8601 format in US/Eastern timezone
         try:
             row['Timestamp'] = to_iso8601(row['Timestamp'], 'US/Eastern')
         except AttributeError:
-            print('WARNING: row {0}\ndropped while normalizing timestamp due to error.'.format(list(row.values())))
+            sys.stderr.write('WARNING: row {0}\ndropped while normalizing timestamp due to error.'.format(list(row.values())))
             continue
         # Address : no changes
         # ZIP : limit to 5 digits, prefix with 0
@@ -72,7 +66,7 @@ def normalize():
         writer.writerow(row)
 
 
-# In[9]:
+# In[ ]:
 
 
 if __name__ == "__main__":
